@@ -1,0 +1,6 @@
+# Raspberry Pi hardware-specific dependencies
+# Install on the Pi with: pip3 install -r requirements-pi.txt
+robot_hat
+vilib
+sunfounder_controller
+readchar

@@ -1,0 +1,23 @@
+{
+    "python.defaultInterpreterPath": "${env:CONDA_PREFIX}/bin/python",
+    "python.condaPath": "conda",
+    "python.terminal.activateEnvironment": true,
+    "python.analysis.extraPaths": [
+        "${workspaceFolder}",
+        "${workspaceFolder}/gpt_examples"
+    ],
+    "python.analysis.ignore": [
+        "**/robot_hat/**",
+        "**/vilib/**",
+        "**/sunfounder_controller/**"
+    ],
+    "python.linting.enabled": true,
+    "python.linting.pylintEnabled": false,
+    "python.linting.flake8Enabled": false,
+    "editor.formatOnSave": false,
+    "files.exclude": {
+        "**/__pycache__": true,
+        "**/*.pyc": true,
+        "**/build": true
+    }
+}
