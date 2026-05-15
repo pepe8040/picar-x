@@ -1,9 +1,16 @@
 from sunfounder_controller import SunFounderController
 from picarx import Picarx
-from robot_hat import utils, Music
+from picarx import utils
+from picarx.music import Music
 from vilib import Vilib
 import os
 from time import sleep
+
+try:
+    from tflite_runtime.interpreter import Interpreter
+    TF_SUPPORTED = True
+except ImportError:
+    TF_SUPPORTED = False
 
 # reset robot_hat
 utils.reset_mcu()
@@ -29,6 +36,7 @@ SafeDistance = 40   # > 40 safe
 DangerDistance = 20 # > 20 && < 40 turn around, < 20 backward
 
 DETECT_COLOR = 'red' # red, green, blue, yellow , orange, purple
+last_values = {}
 
 # init music player
 User = os.popen('echo ${SUDO_USER:-$LOGNAME}').readline().strip()
@@ -165,7 +173,7 @@ def main():
         # joystick moving
         if line_track_switch != True and avoid_obstacles_switch != True:
             Joystick_K_Val = sc.get('K')
-            if Joystick_K_Val != None:
+            if Joystick_K_Val != None and isinstance(Joystick_K_Val, list) and len(Joystick_K_Val) == 2:
                 dir_angle = utils.mapping(Joystick_K_Val[0], -100, 100, -30, 30)
                 speed = Joystick_K_Val[1]
                 px.set_dir_servo_angle(dir_angle)
@@ -179,27 +187,33 @@ def main():
 
         # camera servos control
         Joystick_Q_Val = sc.get('Q')
-        if Joystick_Q_Val != None:
+        if Joystick_Q_Val != None and isinstance(Joystick_Q_Val, list) and len(Joystick_Q_Val) == 2:
             pan = min(90, max(-90, Joystick_Q_Val[0]))
             tilt = min(65, max(-35, Joystick_Q_Val[1]))
             px.set_cam_pan_angle(pan)
             px.set_cam_tilt_angle(tilt)
 
         # image recognition
-        if sc.get('N') == True:
-            Vilib.color_detect(DETECT_COLOR)
-        else:
-            Vilib.color_detect("close")
+        n_value = sc.get('N')
+        if n_value != last_values.get('N'):
+            last_values['N'] = n_value
+            if n_value == True:
+                Vilib.color_detect(DETECT_COLOR)
+            else:
+                Vilib.color_detect("close")
 
-        if sc.get('O') == True:
-            Vilib.face_detect_switch(True)  
-        else:
-            Vilib.face_detect_switch(False)  
+        o_value = sc.get('O')
+        if o_value != last_values.get('O'):
+            last_values['O'] = o_value
+            Vilib.face_detect_switch(o_value)  
 
-        if sc.get('P') == True:
-            Vilib.object_detect_switch(True) 
-        else:
-            Vilib.object_detect_switch(False)
+        p_value = sc.get('P')
+        if p_value != last_values.get('P'):
+            last_values['P'] = p_value
+            if not TF_SUPPORTED:
+                print("[WARNING] Object detection is currently not available for this OS.")
+            else:
+                Vilib.object_detect_switch(p_value) 
 
 
 if __name__ == "__main__":

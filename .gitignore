@@ -4,3 +4,4 @@ build/*
 bk/
 .DS_Store
 .claude/worktrees/
+*secret*
