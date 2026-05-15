@@ -34,9 +34,9 @@ Host picar
 
 | Package | Status | Install path |
 |---------|--------|--------------|
-| robot_hat v2.5.x | installed 2026-05-15 | `~/robot-hat/` |
-| vilib | pending | `~/vilib/` |
-| picar-x (Peter's fork, v2.1.x) | pending | `~/picar-x/` |
+| robot_hat 2.5.2a1 | installed 2026-05-15 | `~/robot-hat/` |
+| vilib 0.3.18 | installed 2026-05-15 | `~/vilib/` |
+| picar-x 2.1.0a1 | installed 2026-05-15 | `~/picar-x/` |
 | Node.js | not yet | for pi.dev framework |
 
 ## Install Commands
@@ -74,7 +74,7 @@ cd ~/picar-x && sudo pip3 install . --break-system-packages
 
 ## Next Steps
 
-- [ ] Install vilib
-- [ ] Deploy picar-x v2.1.x fork
+- [x] Install vilib
+- [x] Deploy picar-x v2.1.x fork
 - [ ] Install Node.js → explore pi.dev as agentic layer
 - [ ] Set up VS Code Remote SSH (code CLI on Pi)
