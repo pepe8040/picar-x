@@ -48,15 +48,13 @@ Pi is a terminal AI agent (pi.dev) that runs on the Pi and connects to AI provid
 **Auth file:** `~/.pi/agent/auth.json` (chmod 600)
 ```json
 {
-  "anthropic": { "type": "api_key", "key": "sk-ant-..." },
-  "openai":    { "type": "api_key", "key": "sk-..." }
+  "anthropic": { "type": "api_key", "key": "sk-ant-..." }
 }
 ```
 
 **API keys also set in** `~/.bashrc`:
 ```bash
 export ANTHROPIC_API_KEY=sk-ant-...
-export OPENAI_API_KEY=sk-...
 export PATH=$HOME/.local/bin:$PATH
 ```
 
@@ -72,7 +70,7 @@ pi -p "your prompt"                            # one-shot print mode
 
 **Status (2026-05-15):**
 - Anthropic/Claude: ✓ working
-- OpenAI: ✗ key invalid (needs to be re-entered)
+- OpenAI: removed (key revoked, not in use)
 
 ## Install Commands
 
@@ -120,9 +118,9 @@ npm install -g @earendil-works/pi-coding-agent
 
 ## Next Session Plan
 
-### Priority 1 — Fix & verify connectivity
-- [ ] Fix OpenAI API key in `~/.bashrc` and `~/.pi/agent/auth.json`
-- [ ] Run a live test of both Claude and OpenAI via pi on the Pi
+### Priority 1 — Verify connectivity
+- [ ] Run a live test of Claude via pi on the Pi (`pi -p "hello"`)
+- [ ] OpenAI not configured — add key if needed in future
 
 ### Priority 2 — First hardware test
 - [ ] Run `example/1.move.py` on the Pi to verify PiCar-X hardware responds
