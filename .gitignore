@@ -2,3 +2,5 @@
 !.vscode/settings.json
 build/*
 bk/
+.DS_Store
+.claude/worktrees/
