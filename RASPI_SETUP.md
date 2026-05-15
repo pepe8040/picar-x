@@ -30,14 +30,49 @@ Host picar
 | Python | 3.13.5 |
 | Network | WiFi — FRITZ!Box 7582 WH |
 
-## Installed Dependencies
+## Installed Software
 
-| Package | Status | Install path |
-|---------|--------|--------------|
-| robot_hat 2.5.2a1 | installed 2026-05-15 | `~/robot-hat/` |
-| vilib 0.3.18 | installed 2026-05-15 | `~/vilib/` |
-| picar-x 2.1.0a1 | installed 2026-05-15 | `~/picar-x/` |
-| Node.js 24.15.0 / npm 11.12.1 | installed 2026-05-15 | via NodeSource |
+| Package | Version | Install path |
+|---------|---------|--------------|
+| robot_hat | 2.5.2a1 | `~/robot-hat/` |
+| vilib | 0.3.18 | `~/vilib/` |
+| picar-x (Peter's fork) | 2.1.0a1 | `~/picar-x/` |
+| Node.js | 24.15.0 | via NodeSource |
+| npm | 11.12.1 | via NodeSource |
+| pi (pi.dev agent) | 0.74.0 | `~/.local/bin/pi` |
+
+## pi.dev Agent — Configuration
+
+Pi is a terminal AI agent (pi.dev) that runs on the Pi and connects to AI providers.
+
+**Auth file:** `~/.pi/agent/auth.json` (chmod 600)
+```json
+{
+  "anthropic": { "type": "api_key", "key": "sk-ant-..." },
+  "openai":    { "type": "api_key", "key": "sk-..." }
+}
+```
+
+**API keys also set in** `~/.bashrc`:
+```bash
+export ANTHROPIC_API_KEY=sk-ant-...
+export OPENAI_API_KEY=sk-...
+export PATH=$HOME/.local/bin:$PATH
+```
+
+**Usage:**
+```bash
+ssh picar
+pi                                              # interactive, default model
+pi --model anthropic/claude-sonnet-4-6         # Claude Sonnet (most capable)
+pi --model anthropic/claude-haiku-4-5-20251001 # Claude Haiku (fast/cheap)
+pi --model openai/gpt-4o-mini                  # OpenAI (once key fixed)
+pi -p "your prompt"                            # one-shot print mode
+```
+
+**Status (2026-05-15):**
+- Anthropic/Claude: ✓ working
+- OpenAI: ✗ key invalid (needs to be re-entered)
 
 ## Install Commands
 
@@ -55,12 +90,21 @@ cd ~/vilib && sudo python3 install.py
 # 3. picar-x (Peter's fork, v2.1.x)
 git clone -b v2.1.x https://github.com/pepe8040/picar-x.git ~/picar-x
 cd ~/picar-x && sudo pip3 install . --break-system-packages
+
+# 4. Node.js
+curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash -
+sudo apt-get install -y nodejs
+npm config set prefix '~/.local'
+echo 'export PATH=$HOME/.local/bin:$PATH' >> ~/.bashrc
+
+# 5. pi.dev agent
+npm install -g @earendil-works/pi-coding-agent
 ```
 
 ## GitHub Repository
 
 - **Peter's fork:** https://github.com/pepe8040/picar-x
-- **Active branch:** `v2.1.x` (merged upstream 2.1.x bug fixes + Peter's GPT/voice additions)
+- **Active branch:** `v2.1.x` (upstream 2.1.x bug fixes + Peter's GPT/voice additions)
 - **Upstream:** https://github.com/sunfounder/picar-x
 
 ## Known Issues & Solutions
@@ -71,10 +115,26 @@ cd ~/picar-x && sudo pip3 install . --break-system-packages
 | SSID case mismatch in NetworkManager | `sudo nmcli con modify '...' 802-11-wireless.ssid 'FRITZ!Box 7582 WH'` |
 | SSH install commands timing out | Use `nohup bash -c '... > /tmp/install.log 2>&1' &disown` |
 | sudo requires password interactively | `/etc/sudoers.d/peter` has `peter ALL=(ALL) NOPASSWD:ALL` |
+| npm global install permission error | Set `npm config set prefix '~/.local'` (no sudo needed) |
+| pi.dev auth.json wrong format | Must be `{"openai":{"type":"api_key","key":"sk-..."}}` not plain string |
 
-## Next Steps
+## Next Session Plan
 
-- [x] Install vilib
-- [x] Deploy picar-x v2.1.x fork
-- [x] Install Node.js → explore pi.dev as agentic layer
-- [ ] Set up VS Code Remote SSH (code CLI on Pi)
+### Priority 1 — Fix & verify connectivity
+- [ ] Fix OpenAI API key in `~/.bashrc` and `~/.pi/agent/auth.json`
+- [ ] Run a live test of both Claude and OpenAI via pi on the Pi
+
+### Priority 2 — First hardware test
+- [ ] Run `example/1.move.py` on the Pi to verify PiCar-X hardware responds
+- [ ] Test camera: `example/7.computer_vision.py`
+- [ ] Test voice/TTS: `example/13.sound_background_music.py`
+
+### Priority 3 — Agentic layer design
+- [ ] Design how pi.dev connects to PiCar-X commands
+  - pi receives voice/text instruction
+  - Python bridge translates to picarx API calls (move, turn, camera, TTS)
+- [ ] Prototype: pi -p "drive forward 2 seconds" → picarx.forward(2)
+- [ ] Explore new v2.1.x examples: `16.voice_controlled_car.py`, `18.online_llm_test.py`
+
+### Priority 4 — VS Code Remote SSH
+- [ ] Set up VS Code Remote SSH so Pi files can be edited from Mac directly in VS Code
